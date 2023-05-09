@@ -29,4 +29,4 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-          - bot/index.ts
+          - index.ts
