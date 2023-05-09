@@ -51,7 +51,7 @@ app.event("app_mention", async ({ event, say }) => {
   }
   
   const response = await bot.sendMessage(msg, aboutChannel);
-  const text = `<@${event.user}>\n` + response;
+  const text = `<@${event.user}>\n` + response.replace(/<@\w+>/g, "");
   await say({
     token: process.env.SLACK_BOT_TOKEN,
     text,
