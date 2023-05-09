@@ -1,0 +1,2 @@
+# EngineerAssistantSlackChatBot
+エンジニアのアシスタントとして機能するSlackのチャットボット。発言はChatGPT APIを使用する
