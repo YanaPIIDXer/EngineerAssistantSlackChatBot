@@ -1,13 +1,22 @@
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "langchain/prompts";
+import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate, AIMessagePromptTemplate } from "langchain/prompts";
 import { roleTemplate } from "./template";
+
+/**
+ * コンテキスト情報
+ */
+interface ContextInfo {
+  message: string;
+  isUserMessage: boolean;
+}
 
 /**
  * チャットボットクラス
  */
 export class ChatBot {
   private chat: ChatOpenAI;
+  private contexts: ContextInfo[] = [];
 
   /**
    * コンストラクタ
@@ -20,6 +29,15 @@ export class ChatBot {
   }
 
   /**
+   * コンテキスト追加
+   * @param message 発言内容
+   * @param isUserMessage 人間の発言か？
+   */
+  addContext(message: string, isUserMessage: boolean): void {
+    this.contexts.push({ message, isUserMessage });
+  }
+
+  /**
    * メッセージ送信
    * @params message メッセージ
    * @params aboutChannel チャンネルの説明
@@ -28,6 +46,13 @@ export class ChatBot {
   async sendMessage(message: string, aboutChannel: string = ""): Promise<string> {
     const prompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(roleTemplate),
+      ...this.contexts.map(c => {
+        if (c.isUserMessage) {
+          return HumanMessagePromptTemplate.fromTemplate(c.message);
+        } else {
+          return AIMessagePromptTemplate.fromTemplate(c.message);
+        }
+      }),
       HumanMessagePromptTemplate.fromTemplate("{input}"),
     ]);
     
