@@ -16,8 +16,14 @@ const app = new App({
 
 app.event("app_mention", async ({ event, say }) => {
   const msg = event.text.replace(/<@\w+>/g, "");
+
+  const channelInfo = await app.client.conversations.info({
+    channel: event.channel,
+  });
+  const aboutChannel = channelInfo.channel?.purpose?.value ?? "";
+  
   const bot = new ChatBot();
-  const response = await bot.sendMessage(msg);
+  const response = await bot.sendMessage(msg, aboutChannel);
   await say({
     text: `<@${event.user}>\n` + response,
     thread_ts: event.thread_ts || event.ts,
