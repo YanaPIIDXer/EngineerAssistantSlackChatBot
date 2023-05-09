@@ -16,14 +16,17 @@ const app = new App({
 
 app.event("app_mention", async ({ event, say }) => {
   const msg = event.text.replace(/<@\w+>/g, "");
+  const bot = new ChatBot();
+  const response = await bot.sendMessage(msg);
   await say({
-    text: `<@${event.user}>` + msg,
+    text: `<@${event.user}>\n` + response,
     thread_ts: event.thread_ts || event.ts,
   })
 });
 
 import * as AwsServerlessExpress from "aws-serverless-express";
 import { APIGatewayProxyEvent, Context } from "aws-lambda";
+import { ChatBot } from "./Bot";
 const server = AwsServerlessExpress.createServer(expressReceiver.app);
 
 export const lambdaHandler = (event: APIGatewayProxyEvent, context: Context): void => {
