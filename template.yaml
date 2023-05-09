@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  AssistantChatBotApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: 'Prod'
+      Cors:
+        AllowOrigin: "'*'"
+        AllowCredentials: false
+        AllowMethods: "'OPTIONS,POST'"
+        AllowHeaders: "'Content-Type,X-CSRF-TOKEN'"
+  AssistantChatBot:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./bot
+      Handler: index.lambdaHandler
+      Runtime: nodejs14.x
+      Timeout: 180
+      Events:
+        Handle:
+          Type: Api
+          Properties:
+            Path: /slack/events
+            Method: POST
+            RestApiId: !Ref AssistantChatBotApi
+      Environment:
+        Variables:
+          SERVER_RUNNING_MODE: Prod
+          SLACK_SIGN_SECRET: Dummy
+          SLACK_BOT_TOKEN: Dummy
+          OPENAI_TOKEN: Dummy
+
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+          - bot/index.ts
