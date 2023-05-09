@@ -14,6 +14,12 @@ const app = new App({
   endpoints: "/slack/events",
 });
 
+app.use(async ({ context, next }) => {
+  // リトライは握り潰す
+  if (context.retryNum ?? 0 > 0) { return; }
+  await next();
+});
+
 app.event("app_mention", async ({ event, say }) => {
   const msg = event.text.replace(/<@\w+>/g, "");
 
