@@ -2,6 +2,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { App, ExpressReceiver } from "@slack/bolt";
+import { ChatBot } from "./Bot/chatbot";
+import * as AwsServerlessExpress from "aws-serverless-express";
+import { APIGatewayProxyEvent, Context } from "aws-lambda";
+
 const expressReceiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGN_SECRET ?? "",
   processBeforeResponse: true,
@@ -55,9 +59,6 @@ app.event("app_mention", async ({ event, say }) => {
   })
 });
 
-import * as AwsServerlessExpress from "aws-serverless-express";
-import { APIGatewayProxyEvent, Context } from "aws-lambda";
-import { ChatBot } from "./Bot";
 const server = AwsServerlessExpress.createServer(expressReceiver.app);
 
 export const lambdaHandler = (event: APIGatewayProxyEvent, context: Context): void => {
