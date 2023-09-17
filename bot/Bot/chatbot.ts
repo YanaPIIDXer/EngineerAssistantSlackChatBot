@@ -25,6 +25,7 @@ export class ChatBot {
     this.chat = new ChatOpenAI({
       temperature: 0.1,
       openAIApiKey: process.env.OPENAI_TOKEN,
+      modelName: "gpt-4-0613",
     });
   }
 
